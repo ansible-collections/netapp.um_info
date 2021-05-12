@@ -42,5 +42,5 @@ jobs:
         working-directory: ansible_collections/netapp/um_info/
 
       - name: Run Unit Tests
-        run: ansible-test unit --docker -v --color
+        run: ansible-test units --docker -v --color
         working-directory: ansible_collections/netapp/um_info/
