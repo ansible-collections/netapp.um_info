@@ -26,6 +26,10 @@ Join our Slack Channel at [Netapp.io](http://netapp.io/slack)
 
 # Release Notes
 
+## 21.7.0
+### Bux fixes
+  - rename na_um_list_volumes.p to na_um_list_volumes.py
+
 ## 21.6.0
 ### Minor change
 - na_um_list_aggregates has been renamed na_um_aggregates_info 
