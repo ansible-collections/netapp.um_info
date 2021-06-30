@@ -34,6 +34,7 @@ common routines for um_info
 from __future__ import (absolute_import, division, print_function)
 __metaclass__ = type
 
+import logging
 from ansible.module_utils.basic import missing_required_lib
 
 try:
@@ -53,6 +54,9 @@ ERROR_MSG = dict(
     no_cserver='This module is expected to run as cluster admin'
 )
 
+LOG = logging.getLogger(__name__)
+LOG_FILE = '/tmp/um_apis.log'
+
 
 def na_um_host_argument_spec():
 
@@ -62,7 +66,33 @@ def na_um_host_argument_spec():
         password=dict(required=True, type='str', no_log=True),
         validate_certs=dict(required=False, type='bool', default=True),
         http_port=dict(required=False, type='int'),
+        feature_flags=dict(required=False, type='dict', default=dict()),
     )
+
+
+def has_feature(module, feature_name):
+    feature = get_feature(module, feature_name)
+    if isinstance(feature, bool):
+        return feature
+    module.fail_json(msg="Error: expected bool type for feature flag: %s" % feature_name)
+
+
+def get_feature(module, feature_name):
+    ''' if the user has configured the feature, use it
+        otherwise, use our default
+    '''
+    default_flags = dict(
+        strict_json_check=True,                 # if true, fail if response.content in not empty and is not valid json
+
+        trace_apis=False,                       # if true, append REST requests/responses to LOG_FILE
+
+    )
+
+    if module.params['feature_flags'] is not None and feature_name in module.params['feature_flags']:
+        return module.params['feature_flags'][feature_name]
+    if feature_name in default_flags:
+        return default_flags[feature_name]
+    module.fail_json(msg="Internal error: unexpected feature flag: %s" % feature_name)
 
 
 class UMRestAPI(object):
@@ -81,6 +111,8 @@ class UMRestAPI(object):
         self.errors = list()
         self.debug_logs = list()
         self.check_required_library()
+        if has_feature(module, 'trace_apis'):
+            logging.basicConfig(filename=LOG_FILE, level=logging.DEBUG, format='%(asctime)s %(levelname)-8s %(message)s')
 
     def check_required_library(self):
         if not HAS_REQUESTS:
@@ -101,15 +133,28 @@ class UMRestAPI(object):
             if accept is not None:
                 headers['accept'] = accept
 
+        def check_contents(response):
+            '''json() may fail on an empty value, but it's OK if no response is expected.
+               To avoid false positives, only report an issue when we expect to read a value.
+               The first get will see it.
+            '''
+            if method == 'GET' and has_feature(self.module, 'strict_json_check'):
+                contents = response.content
+                if len(contents) > 0:
+                    raise ValueError("Expecting json, got: %s" % contents)
+
         def get_json(response):
             ''' extract json, and error message if present '''
             try:
                 json = response.json()
             except ValueError:
+                check_contents(response)
                 return None, None
             error = json.get('error')
             return json, error
 
+        self.log_debug('sending', repr(dict(method=method, url=url, verify=self.verify, params=params,
+                                            timeout=self.timeout, json=json, headers=headers)))
         try:
             response = requests.request(method, url, verify=self.verify, auth=(self.username, self.password),
                                         params=params, timeout=self.timeout, json=json, headers=headers)
@@ -141,8 +186,10 @@ class UMRestAPI(object):
         return self.send_request(method, api, params)
 
     def log_error(self, status_code, message):
+        LOG.error("%s: %s", status_code, message)
         self.errors.append(message)
         self.debug_logs.append((status_code, message))
 
     def log_debug(self, status_code, content):
+        LOG.debug("%s: %s", status_code, content)
         self.debug_logs.append((status_code, content))

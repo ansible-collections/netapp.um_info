@@ -25,7 +25,7 @@ version_added: '20.5.0'
 author: NetApp Ansible Team (@carchi8py) <ng-ansibleteam@netapp.com>
 
 description:
-- List Nodes on AIQUM/OCUM.
+- List Nodes on AIQUM.
 '''
 
 EXAMPLES = """

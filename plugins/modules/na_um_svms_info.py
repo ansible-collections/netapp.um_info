@@ -25,7 +25,7 @@ version_added: '20.5.0'
 author: NetApp Ansible Team (@carchi8py) <ng-ansibleteam@netapp.com>
 
 description:
-- List SVMs on AIQUM/OCUM.
+- List SVMs on AIQUM.
 '''
 
 EXAMPLES = """

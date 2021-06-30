@@ -2,7 +2,7 @@
 
  netapp.um_info
 
- NetApp Unified Manager(AIQUM 9.7/OCUM) Collection
+ NetApp Unified Manager(AIQUM 9.7) Collection
 
  Copyright (c) 2020 NetApp, Inc. All rights reserved.
  Specifications subject to change without notice.
@@ -27,11 +27,16 @@ Join our Slack Channel at [Netapp.io](http://netapp.io/slack)
 # Release Notes
 
 ## 21.7.0
+
+#### Minor changes
+  - all modules - ability to trace API calls and responses.
+
 ### Bux fixes
+  - all modules - report error when connecting to a server that does not run AIQUM.
   - rename na_um_list_volumes.p to na_um_list_volumes.py
 
 ## 21.6.0
-### Minor change
+### Minor changes
 - na_um_list_aggregates has been renamed na_um_aggregates_info 
 - na_um_list_clusters has been renamed na_um_clusters_info
 - na_um_list_nodes has been renamed na_um_nodes_info

@@ -25,7 +25,7 @@ version_added: '20.6.0'
 author: NetApp Ansible Team (@carchi8py) <ng-ansibleteam@netapp.com>
 
 description:
-- List Volumes on AIQUM/OCUM.
+- List Volumes on AIQUM.
 '''
 
 EXAMPLES = """
