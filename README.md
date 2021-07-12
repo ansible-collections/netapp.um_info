@@ -30,10 +30,12 @@ Join our Slack Channel at [Netapp.io](http://netapp.io/slack)
 
 #### Minor changes
   - all modules - ability to trace API calls and responses.
+  - all modules - new `max_records` option to limit the amount of data in a single GET response.
 
 ### Bux fixes
   - all modules - report error when connecting to a server that does not run AIQUM.
-  - rename na_um_list_volumes.p to na_um_list_volumes.py
+  - all modules - return all records rather than the first 1000 records (mostly for volumes).
+  - rename na_um_list_volumes.p to na_um_list_volumes.py.
 
 ## 21.6.0
 ### Minor changes

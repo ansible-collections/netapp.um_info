@@ -137,9 +137,7 @@ class NetAppUMAggregate(object):
         message, error = self.rest_api.get(api, data)
         if error:
             self.module.fail_json(msg=error)
-        if message['total_records'] != 0:
-            return message['records']
-        return []
+        return self.rest_api.get_records(message, api)
 
     def apply(self):
         """

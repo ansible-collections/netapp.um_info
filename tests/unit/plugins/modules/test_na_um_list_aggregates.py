@@ -20,9 +20,12 @@ from ansible_collections.netapp.um_info.plugins.modules.na_um_aggregates_info\
 # REST API canned responses when mocking send_request
 SRR = {
     # common responses
-    'empty_good': ({}, None),
+    'empty_not_so_good': ({}, None),
     'end_of_sequence': (None, "Unexpected call to send_request"),
     'generic_error': (None, "Expected error"),
+    'get_next': (dict(_links=dict(self='me', next=dict(href='next_records'))), None),
+    'get_data': (dict(_links=dict(self='me'), records=['data1', 'data2'], total_records=2), None),
+    'get_data_missing_field': (dict(_links=dict(self='me'), records=['data1', 'data2']), None),
     # module specific responses
     'get_aggregates': {'name': 'ansible'}
 }
@@ -118,3 +121,33 @@ class TestMyModule(unittest.TestCase):
         my_obj = my_module()
         my_obj.get_aggregates = Mock(return_value=SRR['get_aggregates'])
         assert my_obj.get_aggregates() is not None
+
+    @patch('ansible_collections.netapp.um_info.plugins.module_utils.netapp.UMRestAPI.send_request')
+    def test_get_next(self, mock_request):
+        ''' test for existing aggregates'''
+        set_module_args(self.set_default_args())
+        mock_request.side_effect = [
+            SRR['get_next'],
+            SRR['get_data'],
+            SRR['end_of_sequence'],
+        ]
+        my_obj = my_module()
+        assert my_obj.get_aggregates() is not None
+
+    @patch('ansible_collections.netapp.um_info.plugins.module_utils.netapp.UMRestAPI.send_request')
+    def test_negative_get_next(self, mock_request):
+        ''' test for existing aggregates'''
+        set_module_args(self.set_default_args())
+        mock_request.side_effect = [
+            SRR['get_next'],
+            SRR['get_data_missing_field'],
+            SRR['end_of_sequence'],
+        ]
+        my_obj = my_module()
+        with pytest.raises(AnsibleFailJson) as exc:
+            my_obj.get_aggregates() is not None
+        print(exc.value.args[0])
+        msg = 'unexpected response from datacenter/storage/aggregates?order_by=performance_capacity.used'
+        assert msg in exc.value.args[0]['msg']
+        msg = "expecting key: 'total_records'"
+        assert msg in exc.value.args[0]['msg']

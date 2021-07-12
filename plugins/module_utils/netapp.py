@@ -36,6 +36,7 @@ __metaclass__ = type
 
 import logging
 from ansible.module_utils.basic import missing_required_lib
+from ansible.module_utils._text import to_native
 
 try:
     from ansible.module_utils.ansible_release import __version__ as ansible_version
@@ -67,6 +68,7 @@ def na_um_host_argument_spec():
         validate_certs=dict(required=False, type='bool', default=True),
         http_port=dict(required=False, type='int'),
         feature_flags=dict(required=False, type='dict', default=dict()),
+        max_records=dict(required=False, type='int')
     )
 
 
@@ -83,7 +85,6 @@ def get_feature(module, feature_name):
     '''
     default_flags = dict(
         strict_json_check=True,                 # if true, fail if response.content in not empty and is not valid json
-
         trace_apis=False,                       # if true, append REST requests/responses to LOG_FILE
 
     )
@@ -103,11 +104,12 @@ class UMRestAPI(object):
         self.password = self.module.params['password']
         self.hostname = self.module.params['hostname']
         self.verify = self.module.params['validate_certs']
+        self.max_records = self.module.params['max_records']
         self.timeout = timeout
         if self.module.params.get('http_port') is not None:
-            self.url = 'https://%s:%d/api/' % (self.hostname, self.module.params['http_port'])
+            self.url = 'https://%s:%d' % (self.hostname, self.module.params['http_port'])
         else:
-            self.url = 'https://%s/api/' % self.hostname
+            self.url = 'https://%s' % self.hostname
         self.errors = list()
         self.debug_logs = list()
         self.check_required_library()
@@ -117,6 +119,18 @@ class UMRestAPI(object):
     def check_required_library(self):
         if not HAS_REQUESTS:
             self.module.fail_json(msg=missing_required_lib('requests'))
+
+    def get_records(self, message, api):
+        records = list()
+        try:
+            if message['total_records'] > 0:
+                records = message['records']
+                if message['total_records'] != len(records):
+                    self.module.warn('Mismatch between received: %d and expected: %d records.' % (len(records), message['total_records']))
+        except KeyError as exc:
+            self.module.fail_json(msg='Error: unexpected response from %s: %s - expecting key: %s'
+                                  % (api, message, to_native(exc)))
+        return records
 
     def send_request(self, method, api, params, json=None, accept=None):
         ''' send http request and process response, including error conditions '''
@@ -182,8 +196,45 @@ class UMRestAPI(object):
         return json_dict, error_details
 
     def get(self, api, params):
+
+        def get_next_api(message):
+            '''make sure _links is present, and href is present if next is present
+               return api if next is present, None otherwise
+               return error if _links or href are missing
+            '''
+            api, error = None, None
+            if message is None or '_links' not in message:
+                error = 'Expecting _links key in %s' % message
+            elif 'next' in message['_links']:
+                if 'href' in message['_links']['next']:
+                    api = message['_links']['next']['href']
+                else:
+                    error = 'Expecting href key in %s' % message['_links']['next']
+            return api, error
+
         method = 'GET'
-        return self.send_request(method, api, params)
+        records = list()
+        if self.max_records is not None:
+            if params and 'max_records' not in params:
+                params['max_records'] = self.max_records
+            else:
+                params = dict(max_records=self.max_records)
+        api = '/api/%s' % api
+
+        while api:
+            message, error = self.send_request(method, api, params)
+            if error:
+                return message, error
+            api, error = get_next_api(message)
+            if error:
+                return message, error
+            if 'records' in message:
+                records.extend(message['records'])
+            params = None       # already included in the next link
+
+        if records:
+            message['records'] = records
+        return message, error
 
     def log_error(self, status_code, message):
         LOG.error("%s: %s", status_code, message)

@@ -54,6 +54,13 @@ options:
       - trace_apis can be set to true to enable tracing, data is written to /tmp/um_apis.log.
       type: dict
       version_added: 21.7.0
+  max_records:
+      description:
+      - Maximum number of records retrieved in a single GET request.
+      - This module loops on GET requests until all available records are fetched.
+      - If absent, AIQUM uses 1000.
+      type: int
+      version_added: 21.7.0
 
 
 requirements:
