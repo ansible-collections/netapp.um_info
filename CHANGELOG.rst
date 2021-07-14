@@ -5,6 +5,22 @@ NetApp Unified Manager Info Collection Release Notes
 .. contents:: Topics
 
 
+v21.7.0
+=======
+
+Minor Changes
+-------------
+
+- all modules - ability to trace API calls and responses.
+- all modules - new ``max_records`` option to limit the amount of data in a single GET response.
+
+Bugfixes
+--------
+
+- all modules - report error when connecting to a server that does not run AIQUM.
+- all modules - return all records rather than the first 1000 records (mostly for volumes).
+- rename na_um_list_volumes.p to na_um_list_volumes.py
+
 v21.6.0
 =======
 

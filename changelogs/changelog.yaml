@@ -47,3 +47,19 @@ releases:
     fragments:
     - DEVOPS-3962.yaml
     release_date: '2021-05-06'
+  21.7.0:
+    changes:
+      bugfixes:
+      - all modules - report error when connecting to a server that does not run AIQUM.
+      - all modules - return all records rather than the first 1000 records (mostly
+        for volumes).
+      - rename na_um_list_volumes.p to na_um_list_volumes.py
+      minor_changes:
+      - all modules - ability to trace API calls and responses.
+      - all modules - new ``max_records`` option to limit the amount of data in a
+        single GET response.
+    fragments:
+    - DEVOPS-2952.yaml
+    - DEVOPS-4059.yaml
+    - DEVOPS-4087.yaml
+    release_date: '2021-07-14'
