@@ -6,7 +6,8 @@ authors:
 license_file: COPYING
 readme: README.md
 description: NetApp Unified Manager(AIQUM 9.7) Collection
-repository: https://github.com/ansible-collections/netapp
+repository: https://github.com/ansible-collections/netapp.um_info
+issues: https://github.com/ansible-collections/netapp.um_info/issues
 homepage: https://netapp.io/configuration-management-and-automation/
 tags:
     - storage
