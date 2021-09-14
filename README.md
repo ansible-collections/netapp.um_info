@@ -1,3 +1,8 @@
+[![Documentation](https://img.shields.io/badge/docs-brightgreen.svg)](https://docs.ansible.com/ansible/devel/collections/netapp/um_info/index.html)
+![example workflow](https://github.com/ansible-collections/netapp.um_info/actions/workflows/main.yml/badge.svg)
+[![codecov](https://codecov.io/gh/ansible-collections/netapp.um_info/branch/main/graph/badge.svg?token=weBYkksxSi)](https://codecov.io/gh/ansible-collections/netapp.um_info)
+
+
 =============================================================
 
  netapp.um_info
