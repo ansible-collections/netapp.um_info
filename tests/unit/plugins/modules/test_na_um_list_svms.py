@@ -7,14 +7,20 @@ from __future__ import (absolute_import, division, print_function)
 __metaclass__ = type
 import json
 import pytest
+import sys
 
-from ansible_collections.netapp.um_info.tests.unit.compat import unittest
-from ansible_collections.netapp.um_info.tests.unit.compat.mock import patch, Mock
 from ansible.module_utils import basic
 from ansible.module_utils._text import to_bytes
+from ansible_collections.netapp.um_info.tests.unit.compat import unittest
+from ansible_collections.netapp.um_info.tests.unit.compat.mock import patch, Mock
+import ansible_collections.netapp.um_info.plugins.module_utils.netapp as netapp_utils
 
 from ansible_collections.netapp.um_info.plugins.modules.na_um_svms_info\
     import NetAppUMSVM as my_module  # module under test
+
+
+if not netapp_utils.HAS_REQUESTS and sys.version_info < (2, 7):
+    pytestmark = pytest.mark.skip('Skipping Unit Tests on 2.6 as requests is not be available')
 
 
 # REST API canned responses when mocking send_request
