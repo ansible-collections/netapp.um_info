@@ -23,6 +23,9 @@ collections:
   - netapp.um_info
 ```
 
+# Module documentation
+https://docs.ansible.com/ansible/devel/collections/netapp/um_info/
+
 # Code of Conduct
 This collection follows the [Ansible project's Code of Conduct](https://docs.ansible.com/ansible/devel/community/code_of_conduct.html).
 
