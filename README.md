@@ -1,6 +1,7 @@
 [![Documentation](https://img.shields.io/badge/docs-brightgreen.svg)](https://docs.ansible.com/ansible/devel/collections/netapp/um_info/index.html)
 ![example workflow](https://github.com/ansible-collections/netapp.um_info/actions/workflows/main.yml/badge.svg)
 [![codecov](https://codecov.io/gh/ansible-collections/netapp.um_info/branch/main/graph/badge.svg?token=weBYkksxSi)](https://codecov.io/gh/ansible-collections/netapp.um_info)
+[![Discord](https://img.shields.io/discord/855068651522490400)](https://discord.gg/NetApp)
 
 
 =============================================================
@@ -30,7 +31,7 @@ https://docs.ansible.com/ansible/devel/collections/netapp/um_info/
 This collection follows the [Ansible project's Code of Conduct](https://docs.ansible.com/ansible/devel/community/code_of_conduct.html).
 
 # Need help
-Join our Slack Channel at [Netapp.io](http://netapp.io/slack)
+Join our [Discord](https://discord.gg/NetApp)
 
 # Release Notes
 
