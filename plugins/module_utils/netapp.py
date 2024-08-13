@@ -43,7 +43,7 @@ try:
 except ImportError:
     ansible_version = 'unknown'
 
-COLLECTION_VERSION = "21.8.1"
+COLLECTION_VERSION = "21.9.0"
 
 try:
     import requests
@@ -67,7 +67,7 @@ def na_um_host_argument_spec():
         password=dict(required=True, type='str', no_log=True),
         validate_certs=dict(required=False, type='bool', default=True),
         http_port=dict(required=False, type='int'),
-        feature_flags=dict(required=False, type='dict', default=dict()),
+        feature_flags=dict(required=False, type='dict'),
         max_records=dict(required=False, type='int')
     )
 

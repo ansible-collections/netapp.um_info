@@ -6,16 +6,13 @@ from __future__ import (absolute_import, division, print_function)
 __metaclass__ = type
 
 import json
-import os.path
 import sys
-import tempfile
 
 import pytest
 
 from ansible.module_utils.ansible_release import __version__ as ansible_version
 from ansible.module_utils import basic
 from ansible.module_utils._text import to_bytes
-from ansible_collections.netapp.um_info.plugins.module_utils.netapp import COLLECTION_VERSION
 from ansible_collections.netapp.um_info.tests.unit.compat.mock import patch
 
 import ansible_collections.netapp.um_info.plugins.module_utils.netapp as netapp_utils
