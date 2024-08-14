@@ -35,9 +35,15 @@ Join our [Discord](https://discord.gg/NetApp)
 
 # Release Notes
 
+## 21.10.0
+
+### Minor changes
+  - Requires Ansible 2.15 or higher.
+
 ## 21.9.0
-### Minor change
-  - Requires Ansible 2.14 or higher
+
+### Minor changes
+  - Requires Ansible 2.14 or higher.
 
 ## 21.8.0
 
@@ -56,6 +62,7 @@ Join our [Discord](https://discord.gg/NetApp)
   - rename na_um_list_volumes.p to na_um_list_volumes.py.
 
 ## 21.6.0
+
 ### Minor changes
 - na_um_list_aggregates has been renamed na_um_aggregates_info 
 - na_um_list_clusters has been renamed na_um_clusters_info
